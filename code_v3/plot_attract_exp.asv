@@ -1,0 +1,21 @@
+function [] = plot_attract_exp(fighandle)
+
+figure = fighandle;
+% figure out x/y axis bounds:
+hold on
+
+[~,xs,ys] = attract_exp([0,0]);
+xcoord = linspace(min(xs,,100,50)
+ycoord = linspace(-100,100,50)
+
+% copied from attract_exp.m
+for x = 1:length(xcoord)
+    concgrad(:,x) = 100*exp(-sqrt((xs-xcoord(x))^2+(ys-ycoord).^2)/300);
+end
+%contourf(xcoord,ycoord,concgrad)
+pcolor(xcoord,ycoord,concgrad)
+%mesh(xcoord,ycoord,concgrad)        
+
+%concgrad = arrayfun(@(xcoord,ycoord)(exp(-sqrt((xs-xcoord)^2+(ys-ycoord)^2))),xcoord,ycoord);
+shading flat
+shading interp

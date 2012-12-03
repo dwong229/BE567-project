@@ -1,0 +1,66 @@
+% E.coli Simulation Main
+clear
+close all
+% simulation parameters
+phi = 0;   % I-> A   ligand binding
+delta = 1; % A -> I   reduced ligand detected
+alpha = 0.1; % AA -> AAp
+beta = 100;    % AAp + YY -> AA + YYp autophosphorelation of intracellular kinase (CheA) + phosphorelation of CheY
+gamma = 1; % YYp -> YY
+mu = 1;      % YYp -> motor
+rho = .1;     % run rate (run to tumble)
+
+rxnrate = [phi delta alpha beta gamma mu rho];
+
+I = 0;
+A = 1;
+AA = 1;  %CheA
+AAp = 0; %CheA-p
+YY = 1;  %CheY
+YYp = 0; %CheY-p
+Mot = 1; %CheY-p attached to motor
+Run = 1;
+
+x = 0;
+y = 0;
+theta = 0;
+
+init.chem = [I A AA AAp YY YYp Mot Run];
+init.dyn = [x y theta]; %start at [x,y,theta]
+
+simTime = 50;
+%% Computation for single cell:
+% Compute state
+[timeVec,state] =  ecoli_gillespie_func(rxnrate,init,simTime,false);
+
+% Plot trajectory
+%plotstate = zeros(size(state));
+for i =1:size(state.chem,2)
+    %[plottime,plotstate(:,i)] = stairs(timeVec,state.chem(:,i));
+    [plottime,plotstate(:,i)] = stairs(timeVec,state.chem(:,i));
+end
+
+figure
+subplot(4,1,1) %I,A
+plot(plottime,plotstate(:,1),'r',plottime,plotstate(:,2),'g')
+title('Inactive/Active')
+
+subplot(4,1,2) %CheA and CheAp
+plot(plottime,plotstate(:,3),'b',plottime,plotstate(:,4),'r')
+title('AA/AAp')
+
+subplot(4,1,3) %CheY and CheYp
+plot(plottime,plotstate(:,5),'b',plottime,plotstate(:,6),'r')
+title('YY/YYp')
+
+subplot(4,1,4) %Mot
+plot(plottime,plotstate(:,7),'b',plottime,plotstate(:,8),'-r')
+title('Mot/Run')
+
+% Compute amount of time in Run vs. Tumble
+% when Run == 1: run
+diffTime = timeVec(2:end) - timeVec(1:end-1);
+runTime = sum(diffTime(state.chem(1:end-1,7)>0));
+tumbleTime= timeVec(end) - runTime;
+rtRatio = runTime/tumbleTime;
+fprintf('Run Time: %4.1f s, Tumble Time: %4.1f s. Run/Tumble: %4.4f \n',runTime, tumbleTime,rtRatio)
