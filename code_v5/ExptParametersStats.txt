@@ -1,0 +1,55 @@
+1000 random walk simulation:
+
+Params:
+phi = 0;   % I-> A   ligand binding
+delta = 1; % A -> I   reduced ligand detected
+alpha = 0.11; % AA -> AAp
+beta = 1e8;    % AAp + YY -> AA + YYp autophosphorelation of intracellular kinase (CheA) + phosphorelation of CheY
+gamma = 0.031; % YYp -> YY
+mu = 0.015;      % YYp -> motor
+rho = mu/10;     % run rate (run to tumble)
+
+I = 1; % no chemoattractant
+A = 0;
+AA = 6700;  %CheA
+AAp = 0; %CheA-p
+YY = 8200;  %CheY
+YYp = 0; %CheY-p
+Mot = 1; %CheY-p attached to motor
+Run = 1;
+
+Mean run-tumble ratio: 10.4389, stdev: 2.6647 
+Mean displacement ratio: (26890,-3366), stdev: (116007,122482) 
+
+%%%%%%%%%%%%%%%%%%%%%%
+RANDOMWALK2
+repeatSim = 1000;
+simIterations = 1000;
+
+phi = 0;   % I-> A   ligand binding
+delta = 1; % A -> I   reduced ligand detected
+alpha = 0.11; % AA -> AAp
+beta = 1e8;    % AAp + YY -> AA + YYp autophosphorelation of intracellular kinase (CheA) + phosphorelation of CheY
+gamma = 0.031; % YYp -> YY
+mu = 1;
+rho = .1;
+I = 1; % no chemoattractant
+A = 0;
+AA = 6700;  %CheA
+AAp = 0; %CheA-p
+YY = 8200;  %CheY
+YYp = 0; %CheY-p
+Mot = 1; %CheY-p attached to motor
+Run = 1;
+
+stateChange(1,:) = [-1 1 zeros(1,5) 1]; % I
+stateChange(2,:) = [1 -1 zeros(1,5) 1]; % A
+stateChange(3,:) = [0 0 -1 1 zeros(1,3) 1]; % AA
+stateChange(4,:) = [0 0 1 -1 -1 1 0 1]; % AAp + YY
+stateChange(5,:) = [0 0 0 0 1 -1 0 1]; % YYp ->YY
+stateChange(6,:) = [zeros(1,6) 1 1]; % YYp -> More likely to tumble, but still running
+stateChange(7,:) = [zeros(1,6) -1 -1]; % run -> tumble
+
+Mean run-tumble ratio: 10.7073, stdev: 2.5276 
+Mean displacement ratio: ( 297,-183), stdev: (1666,1637) 
+
